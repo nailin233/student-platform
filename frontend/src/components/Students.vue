@@ -6,6 +6,7 @@ import {
   NDataTable, NPagination, NModal, NForm, NFormItem, NDescriptions,
   NDescriptionsItem, NPopconfirm, NTag
 } from 'naive-ui'
+import { request } from '../api.js'
 
 const message = useMessage()
 const dialog = useDialog()
@@ -92,10 +93,19 @@ function selectOptions(key) {
   return []
 }
 
-// 空表单：数字字段给 0，其余给空串，避免后端参数缺失
+// 空表单默认值。
+// - number 字段给 0：后端这些字段是 float/int 且 ge=0，给 null 会 422
+// - status 给「在读」：后端 status 是非可选的 str，传 null 会 422，
+//   而它是下拉框、用户常常不选，必须给初值兜底
+// - 其余文本/下拉字段给空串，提交时统一转 null
+const FIELD_DEFAULTS = { status: '在读' }
+
 function emptyForm() {
   return Object.fromEntries(
-    fields.map(([, key, type]) => [key, type === 'number' ? 0 : ''])
+    fields.map(([, key, type]) => {
+      if (key in FIELD_DEFAULTS) return [key, FIELD_DEFAULTS[key]]
+      return [key, type === 'number' ? 0 : '']
+    })
   )
 }
 const form = ref(emptyForm())
@@ -111,11 +121,12 @@ function formatDetail(key) {
   return v
 }
 
+// 把后端返回的 detail 转成可读文案。
+// FastAPI 校验失败时 detail 是数组（[{loc,msg,type}]），直接拼进字符串会变成 [object Object]。
+const labelMap = Object.fromEntries(fields.map(([label, key]) => [key, label]))
+
 async function req(url, opt = {}) {
-  const res = await fetch(url, opt)
-  const body = await res.json().catch(() => null)
-  if (!res.ok) throw Error(body?.detail || `请求失败（${res.status}）`)
-  return body
+  return request(url, opt, labelMap)
 }
 
 async function load() {

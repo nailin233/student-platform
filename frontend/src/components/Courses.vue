@@ -5,6 +5,7 @@ import {
   NButton, NSpace, NCard, NInput, NInputNumber, NAlert,
   NDataTable, NModal, NForm, NFormItem, NPopconfirm, NTag
 } from 'naive-ui'
+import { request } from '../api.js'
 
 const message = useMessage()
 
@@ -31,11 +32,10 @@ function emptyForm() {
 }
 const form = ref(emptyForm())
 
+const labelMap = Object.fromEntries(fields.map(([label, key]) => [key, label]))
+
 async function req(url, opt = {}) {
-  const res = await fetch(url, opt)
-  const body = await res.json().catch(() => null)
-  if (!res.ok) throw Error(body?.detail || `请求失败（${res.status}）`)
-  return body
+  return request(url, opt, labelMap)
 }
 
 async function load() {
