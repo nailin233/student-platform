@@ -1,6 +1,6 @@
 <view class="container">
+  <!-- 导航栏已显示「填写报名资料」（见 signup.json），此处只放引导语，避免重复 -->
   <view class="page-head">
-    <view class="title">填写报名资料</view>
     <view class="subtitle">请核对信息后提交，工作人员会与您联系</view>
   </view>
 

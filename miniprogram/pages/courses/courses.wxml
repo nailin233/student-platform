@@ -1,7 +1,6 @@
 <view class="container">
-  <!-- 页面标题区 -->
+  <!-- 导航栏已显示「选择课程」（见 courses.json），此处只放引导语，避免重复 -->
   <view class="page-head">
-    <view class="title">选择课程</view>
     <view class="subtitle">查看课程安排后填写报名资料</view>
   </view>
 

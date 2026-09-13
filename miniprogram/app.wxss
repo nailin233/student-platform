@@ -60,17 +60,13 @@ page {
   padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
 }
 
-/* 页面标题区 */
+/* 页面引导语区
+   注意：小程序的导航栏由微信原生绘制（配置在 app.json / 页面 .json 的
+   navigationBarTitleText），页面内**不要**再写一遍同名主标题，否则会重复。
+   这里只用于放副标题/引导语。
+   字号不使用 --font-display，避免与导航栏标题视觉打架。 */
 .page-head {
-  padding: 16rpx 0 24rpx;
-}
-
-.title {
-  font-size: var(--font-display);
-  font-weight: 600;
-  line-height: 1.4;
-  color: var(--text-primary);
-  margin-bottom: 8rpx;
+  padding: 8rpx 0 24rpx;
 }
 
 .subtitle {
