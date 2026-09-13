@@ -1,7 +1,210 @@
-page { background: #f6f7f3; color: #213b36; font-size: 32rpx; }
-.container { padding: 32rpx; }
-.title { font-size: 48rpx; font-weight: 700; margin-bottom: 16rpx; }
-.card { background: #fff; border-radius: 16rpx; padding: 28rpx; margin: 20rpx 0; box-shadow: 0 4rpx 16rpx rgba(0,0,0,.06); }
-.muted { color: #64756e; font-size: 28rpx; }
-.primary { background: #236454; color: #fff; min-height: 88rpx; line-height: 88rpx; font-size: 32rpx; }
-button { border-radius: 10rpx; }
+/* ==========================================================================
+   培训机构报名小程序 · 全局样式
+   ---------------------------------------------------------------------------
+   设计令牌与 Web 管理端保持一致（见 frontend/DESIGN-TOKENS.md）。
+   主色 #0052d9、页面底色 #f3f3f4，禁止使用旧的墨绿主题。
+   尺寸单位统一 rpx（750rpx = 屏幕宽度）。
+   ========================================================================== */
+
+/* —— 设计令牌（小程序 wxss 支持 CSS 变量）——
+   同时挂到 :root 与 page：不同基础库版本对根节点变量作用域处理不一致，
+   双写可避免局部版本下变量读不到导致样式全部失效。 */
+:root,
+page {
+  /* 品牌色 */
+  --brand-color: #0052d9;
+  --brand-color-hover: #366ef4;
+  --brand-color-active: #003cab;
+  --brand-color-light: #f2f3ff;
+
+  /* 功能色 */
+  --success-color: #2ba471;
+  --warning-color: #e37318;
+  --error-color: #d54941;
+
+  /* 中性色 */
+  --bg-page: #f3f3f4;
+  --bg-container: #ffffff;
+  --text-primary: rgba(0, 0, 0, 0.9);
+  --text-secondary: rgba(0, 0, 0, 0.6);
+  --text-placeholder: rgba(0, 0, 0, 0.4);
+  --border-color: #e7e8eb;
+
+  /* 字号（中老年友好：正文 32rpx = 16px 起） */
+  --font-display: 56rpx;
+  --font-title: 40rpx;
+  --font-body: 32rpx;
+  --font-caption: 30rpx;
+
+  /* 尺寸 */
+  --radius: 12rpx;
+  --radius-lg: 24rpx;
+  --shadow-card: 0 8rpx 32rpx rgba(15, 23, 42, 0.06);
+  --control-height: 96rpx;
+}
+
+page {
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-size: var(--font-body);
+  line-height: 1.6;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* ==========================================================================
+   布局骨架
+   ========================================================================== */
+
+.container {
+  padding: 32rpx;
+  padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
+}
+
+/* 页面标题区 */
+.page-head {
+  padding: 16rpx 0 24rpx;
+}
+
+.title {
+  font-size: var(--font-display);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-primary);
+  margin-bottom: 8rpx;
+}
+
+.subtitle {
+  font-size: var(--font-caption);
+  color: var(--text-secondary);
+}
+
+.muted {
+  color: var(--text-secondary);
+  font-size: var(--font-caption);
+}
+
+/* ==========================================================================
+   卡片
+   ========================================================================== */
+
+.card {
+  background: var(--bg-container);
+  border-radius: var(--radius-lg);
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: var(--shadow-card);
+}
+
+/* 可点击卡片：给出明确的视觉反馈 */
+.card-tap {
+  transition: background 0.16s ease;
+}
+
+.card-tap:active {
+  background: var(--brand-color-light);
+}
+
+/* ==========================================================================
+   按钮
+   ========================================================================== */
+
+/* 统一清除小程序 button 的默认边框与圆角（默认 ::after 会画一层边框） */
+button {
+  border-radius: var(--radius);
+}
+
+button::after {
+  border: none;
+}
+
+/* 主按钮：高度 96rpx（48px），中老年易点击 */
+.primary {
+  background: var(--brand-color);
+  color: #fff;
+  min-height: var(--control-height);
+  line-height: var(--control-height);
+  font-size: var(--font-body);
+  font-weight: 500;
+  border-radius: var(--radius);
+  border: none;
+}
+
+.primary::after {
+  border: none;
+}
+
+.primary:active {
+  background: var(--brand-color-active);
+}
+
+/* 次要按钮 */
+.ghost {
+  background: transparent;
+  color: var(--brand-color);
+  min-height: var(--control-height);
+  line-height: var(--control-height);
+  font-size: var(--font-body);
+  border-radius: var(--radius);
+  border: 2rpx solid var(--brand-color);
+}
+
+.ghost::after {
+  border: none;
+}
+
+.ghost:active {
+  background: var(--brand-color-light);
+}
+
+/* 按钮禁用/加载态 */
+.primary[disabled],
+.ghost[disabled] {
+  opacity: 0.6;
+}
+
+/* ==========================================================================
+   状态提示
+   ========================================================================== */
+
+.error {
+  color: var(--error-color);
+  font-size: var(--font-body);
+}
+
+.success-text {
+  color: var(--success-color);
+}
+
+/* 加载态提示 */
+.loading-tip {
+  text-align: center;
+  padding: 80rpx 0;
+  color: var(--text-secondary);
+  font-size: var(--font-body);
+}
+
+/* 空状态 */
+.empty {
+  text-align: center;
+  padding: 100rpx 40rpx;
+  color: var(--text-secondary);
+  font-size: var(--font-body);
+}
+
+/* ==========================================================================
+   标签
+   ========================================================================== */
+
+.tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  font-size: 26rpx;
+  border-radius: 8rpx;
+  background: var(--brand-color-light);
+  color: var(--brand-color);
+}
+
+.tag-success {
+  background: #e8f7f0;
+  color: var(--success-color);
+}

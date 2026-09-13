@@ -1,4 +1,9 @@
 {
   "pages": ["pages/courses/courses", "pages/signup/signup", "pages/success/success"],
-  "window": { "navigationBarTitleText": "培训机构报名", "navigationBarBackgroundColor": "#236454", "navigationBarTextStyle": "white" }
+  "window": {
+    "navigationBarTitleText": "培训机构报名",
+    "navigationBarBackgroundColor": "#0052d9",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f3f3f4"
+  }
 }

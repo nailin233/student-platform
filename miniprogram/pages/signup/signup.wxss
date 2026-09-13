@@ -1,2 +1,85 @@
-input { background: #f6f7f3; padding: 24rpx; margin-bottom: 20rpx; border-radius: 8rpx; }
-button { margin-top: 24rpx; }
+/* 报名页 · 局部样式（全局令牌见 app.wxss） */
+
+/* 所选课程回显条 */
+.course-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  padding: 24rpx 32rpx;
+  background: var(--brand-color-light);
+  box-shadow: none;
+}
+
+.course-bar-label {
+  flex: none;
+  font-size: var(--font-caption);
+  color: var(--text-secondary);
+}
+
+.course-bar-name {
+  font-size: var(--font-body);
+  font-weight: 600;
+  color: var(--brand-color);
+}
+
+/* 表单项 */
+.field {
+  margin-bottom: 12rpx;
+}
+
+.field-label {
+  font-size: var(--font-caption);
+  color: var(--text-secondary);
+  margin-bottom: 12rpx;
+}
+
+.required {
+  color: var(--error-color);
+}
+
+.field-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 0 24rpx;
+  font-size: var(--font-body);
+  color: var(--text-primary);
+  background: var(--bg-page);
+  border: 2rpx solid var(--border-color);
+  border-radius: var(--radius);
+}
+
+.field-placeholder {
+  color: var(--text-placeholder);
+}
+
+/* picker 用 view 模拟输入框，需要 flex 垂直居中 */
+.picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.picker-empty {
+  color: var(--text-placeholder);
+}
+
+.picker-arrow {
+  color: var(--text-placeholder);
+  font-size: 40rpx;
+  line-height: 1;
+}
+
+/* 提交按钮 */
+.submit-btn {
+  margin-top: 32rpx;
+}
+
+/* 底部说明 */
+.tips {
+  text-align: center;
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  padding: 8rpx 20rpx 0;
+}

@@ -1,1 +1,49 @@
-.success { margin-top: 180rpx; text-align: center; }
+/* 报名成功页 · 局部样式（全局令牌见 app.wxss） */
+
+.result-card {
+  margin-top: 140rpx;
+  padding: 64rpx 40rpx;
+  text-align: center;
+}
+
+/* 成功图标：用圆 + 对勾，避免依赖图片资源 */
+.check-circle {
+  width: 128rpx;
+  height: 128rpx;
+  margin: 0 auto 32rpx;
+  border-radius: 50%;
+  background: #e8f7f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.check-mark {
+  font-size: 68rpx;
+  font-weight: 700;
+  color: var(--success-color);
+  line-height: 1;
+}
+
+.result-title {
+  font-size: var(--font-display);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16rpx;
+}
+
+.result-name {
+  font-size: var(--font-body);
+  font-weight: 500;
+  color: var(--brand-color);
+  margin-bottom: 16rpx;
+}
+
+.result-desc {
+  line-height: 1.7;
+  padding: 0 20rpx;
+}
+
+.back-btn {
+  margin-top: 48rpx;
+}

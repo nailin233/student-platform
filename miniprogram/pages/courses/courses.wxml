@@ -1,9 +1,51 @@
 <view class="container">
-  <view class="title">选择课程</view><view class="muted">查看课程安排后填写报名资料</view>
-  <view wx:if="{{loading}}" class="card">正在加载课程...</view>
-  <view wx:if="{{error}}" class="card error">{{error}}</view>
-  <view wx:for="{{courses}}" wx:key="id" class="card" bindtap="chooseCourse" data-id="{{item.id}}">
-    <view>{{item.name}}</view><view class="muted">{{item.duration}} · ¥{{item.price}}</view><view class="muted">{{item.class_time}}</view>
+  <!-- 页面标题区 -->
+  <view class="page-head">
+    <view class="title">选择课程</view>
+    <view class="subtitle">查看课程安排后填写报名资料</view>
   </view>
-  <view class="card" wx:if="{{teacherNames}}"><view>任课老师</view><view class="muted">{{teacherNames}}</view></view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-tip">正在加载课程...</view>
+
+  <!-- 错误 -->
+  <view wx:elif="{{error}}" class="card">
+    <view class="error">{{error}}</view>
+    <button class="ghost retry" bindtap="loadCourses">重新加载</button>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{courses.length === 0}}" class="empty">
+    <view>暂无可报名的课程</view>
+    <view class="muted">请稍后再试，或联系工作人员</view>
+  </view>
+
+  <!-- 课程列表 -->
+  <block wx:else>
+    <view
+      wx:for="{{courses}}"
+      wx:key="id"
+      class="card card-tap"
+      bindtap="chooseCourse"
+      data-id="{{item.id}}"
+    >
+      <view class="course-head">
+        <text class="course-name">{{item.name}}</text>
+        <text class="course-price">¥{{item.priceText}}</text>
+      </view>
+      <view class="course-meta">
+        <text wx:if="{{item.duration}}">学制 {{item.duration}}</text>
+        <text wx:if="{{item.duration && item.class_time}}" class="dot">·</text>
+        <text wx:if="{{item.class_time}}">{{item.class_time}}</text>
+      </view>
+      <view wx:if="{{item.description}}" class="muted course-desc">{{item.description}}</view>
+      <view class="course-action">立即报名 →</view>
+    </view>
+  </block>
+
+  <!-- 师资介绍 -->
+  <view wx:if="{{teacherNames}}" class="card teacher-card">
+    <view class="teacher-label">任课老师</view>
+    <view class="teacher-names">{{teacherNames}}</view>
+  </view>
 </view>

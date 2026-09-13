@@ -1,4 +1,83 @@
-<view class="container"><view class="title">填写报名资料</view><view class="card">
-  <input placeholder="姓名（必填）" data-field="name" bindinput="input" /><input placeholder="性别" data-field="gender" bindinput="input" /><input type="number" placeholder="年龄" data-field="age" bindinput="input" /><input type="number" placeholder="联系电话（必填）" data-field="phone" bindinput="input" />
-  <button class="primary" loading="{{submitting}}" bindtap="submit">提交报名</button>
-</view></view>
+<view class="container">
+  <view class="page-head">
+    <view class="title">填写报名资料</view>
+    <view class="subtitle">请核对信息后提交，工作人员会与您联系</view>
+  </view>
+
+  <!-- 所选课程回显 -->
+  <view wx:if="{{courseName}}" class="card course-bar">
+    <text class="course-bar-label">报名课程</text>
+    <text class="course-bar-name">{{courseName}}</text>
+  </view>
+
+  <view class="card">
+    <!-- 姓名 -->
+    <view class="field">
+      <view class="field-label">姓名 <text class="required">*</text></view>
+      <input
+        class="field-input"
+        placeholder="请输入学员姓名"
+        placeholder-class="field-placeholder"
+        data-field="name"
+        value="{{name}}"
+        bindinput="input"
+      />
+    </view>
+
+    <!-- 性别 -->
+    <view class="field">
+      <view class="field-label">性别</view>
+      <picker
+        mode="selector"
+        range="{{genderOptions}}"
+        value="{{genderIndex}}"
+        bindchange="onGenderChange"
+      >
+        <view class="field-input picker {{genderIndex < 0 ? 'picker-empty' : ''}}">
+          {{genderIndex >= 0 ? genderOptions[genderIndex] : '请选择性别'}}
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 年龄 -->
+    <view class="field">
+      <view class="field-label">年龄</view>
+      <input
+        class="field-input"
+        type="number"
+        placeholder="请输入年龄"
+        placeholder-class="field-placeholder"
+        data-field="age"
+        value="{{age}}"
+        bindinput="input"
+      />
+    </view>
+
+    <!-- 联系电话 -->
+    <view class="field">
+      <view class="field-label">联系电话 <text class="required">*</text></view>
+      <input
+        class="field-input"
+        type="number"
+        maxlength="11"
+        placeholder="请输入 11 位手机号"
+        placeholder-class="field-placeholder"
+        data-field="phone"
+        value="{{phone}}"
+        bindinput="input"
+      />
+    </view>
+
+    <button
+      class="primary submit-btn"
+      loading="{{submitting}}"
+      disabled="{{submitting}}"
+      bindtap="submit"
+    >
+      {{submitting ? '提交中...' : '提交报名'}}
+    </button>
+  </view>
+
+  <view class="tips">提交后工作人员会尽快与您电话确认课程安排。</view>
+</view>
