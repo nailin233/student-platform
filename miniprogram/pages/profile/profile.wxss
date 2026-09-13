@@ -1,0 +1,145 @@
+/* 我的页 · 局部样式（全局令牌见 app.wxss） */
+
+/* 个人信息卡片 */
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+  padding: 40rpx 32rpx;
+}
+
+.user-avatar {
+  flex: none;
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 50%;
+  background: var(--brand-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-avatar-text {
+  font-size: 52rpx;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1;
+}
+
+.user-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  font-size: var(--font-title);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8rpx;
+}
+
+.user-phone {
+  font-size: var(--font-caption);
+  color: var(--text-secondary);
+}
+
+/* 区块小标题 */
+.section-title {
+  font-size: var(--font-caption);
+  color: var(--text-secondary);
+  font-weight: 500;
+  padding: 24rpx 8rpx 12rpx;
+}
+
+/* 空状态卡片 */
+.empty-card {
+  text-align: center;
+  padding: 64rpx 32rpx;
+}
+
+.go-btn {
+  margin-top: 32rpx;
+}
+
+/* 报名记录 */
+.record-item {
+  padding: 28rpx 32rpx;
+}
+
+.record-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.record-course {
+  font-size: var(--font-body);
+  font-weight: 600;
+  color: var(--brand-color);
+}
+
+.record-time {
+  flex: none;
+  font-size: 26rpx;
+  color: var(--text-placeholder);
+}
+
+.record-line {
+  display: flex;
+  gap: 16rpx;
+  font-size: var(--font-caption);
+}
+
+.record-label {
+  color: var(--text-secondary);
+  flex: none;
+}
+
+.record-value {
+  color: var(--text-primary);
+}
+
+.clear-btn {
+  margin-top: 8rpx;
+}
+
+/* 联系机构 */
+.contact-card {
+  padding: 8rpx 32rpx;
+}
+
+.contact-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 24rpx;
+  padding: 24rpx 0;
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.contact-row:last-child {
+  border-bottom: none;
+}
+
+.contact-label {
+  flex: none;
+  width: 140rpx;
+  font-size: var(--font-caption);
+  color: var(--text-secondary);
+}
+
+.contact-value {
+  flex: 1;
+  font-size: var(--font-caption);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.contact-value.link {
+  color: var(--brand-color);
+}
+
+.contact-value.link:active {
+  opacity: 0.6;
+}

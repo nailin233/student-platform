@@ -1,9 +1,41 @@
 {
-  "pages": ["pages/courses/courses", "pages/signup/signup", "pages/success/success"],
+  "pages": [
+    "pages/courses/courses",
+    "pages/teachers/teachers",
+    "pages/profile/profile",
+    "pages/signup/signup",
+    "pages/success/success"
+  ],
   "window": {
     "navigationBarTitleText": "培训机构报名",
     "navigationBarBackgroundColor": "#0052d9",
     "navigationBarTextStyle": "white",
     "backgroundColor": "#f3f3f4"
+  },
+  "tabBar": {
+    "color": "#8a8f99",
+    "selectedColor": "#0052d9",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/courses/courses",
+        "text": "课程",
+        "iconPath": "images/tabbar/courses.png",
+        "selectedIconPath": "images/tabbar/courses-active.png"
+      },
+      {
+        "pagePath": "pages/teachers/teachers",
+        "text": "老师",
+        "iconPath": "images/tabbar/teachers.png",
+        "selectedIconPath": "images/tabbar/teachers-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "images/tabbar/profile.png",
+        "selectedIconPath": "images/tabbar/profile-active.png"
+      }
+    ]
   }
 }

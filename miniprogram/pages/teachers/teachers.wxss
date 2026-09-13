@@ -1,0 +1,74 @@
+/* 师资团队页 · 局部样式（全局令牌见 app.wxss） */
+
+.retry {
+  margin-top: 24rpx;
+}
+
+/* 老师卡片：头像在左，信息在右 */
+.teacher-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 24rpx;
+}
+
+/* 头像：用圆形容器 + 姓氏首字，无需图片资源 */
+.avatar {
+  flex: none;
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: 50%;
+  background: var(--brand-color-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-text {
+  font-size: 44rpx;
+  font-weight: 600;
+  color: var(--brand-color);
+  line-height: 1;
+}
+
+.teacher-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.teacher-head {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 8rpx;
+}
+
+.teacher-name {
+  font-size: var(--font-title);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.teacher-intro {
+  font-size: var(--font-caption);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 12rpx;
+}
+
+/* 电话行：可点击拨打 */
+.teacher-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: var(--font-caption);
+  color: var(--brand-color);
+  padding: 8rpx 0;
+}
+
+.teacher-phone:active {
+  opacity: 0.6;
+}
+
+.phone-icon {
+  font-size: 28rpx;
+}

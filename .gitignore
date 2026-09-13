@@ -16,3 +16,8 @@ __pycache__/
 
 # 损坏的旧仓库备份，不入库
 .git.broken/
+
+# 小程序预览/临时测试文件，不入库
+miniprogram/.preview/
+miniprogram/_*.js
+miniprogram/images/_iconsheet.png

@@ -1,4 +1,5 @@
 const app = getApp()
+const { addEnrollment } = require('../../utils/enrollment')
 
 const GENDER_OPTIONS = ['男', '女']
 
@@ -72,6 +73,12 @@ Page({
       },
       success: res => {
         if (res.statusCode === 201) {
+          // 记到本地，供「我的」页面展示报名历史
+          addEnrollment({
+            name: d.name.trim(),
+            phone: d.phone.trim(),
+            courseName: d.courseName
+          })
           wx.redirectTo({
             url: '/pages/success/success?name=' + encodeURIComponent(d.name.trim())
           })

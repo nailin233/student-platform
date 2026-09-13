@@ -1,0 +1,49 @@
+<view class="container">
+  <view class="page-head">
+    <view class="subtitle">认识我们的授课老师，报名后可预约试听</view>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-tip">正在加载老师信息...</view>
+
+  <!-- 错误 -->
+  <view wx:elif="{{error}}" class="card">
+    <view class="error">{{error}}</view>
+    <button class="ghost retry" bindtap="loadTeachers">重新加载</button>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{teachers.length === 0}}" class="empty">
+    <view>暂无老师信息</view>
+    <view class="muted">请稍后再试，或联系工作人员</view>
+  </view>
+
+  <!-- 老师列表 -->
+  <block wx:else>
+    <view wx:for="{{teachers}}" wx:key="id" class="card teacher-item">
+      <!-- 头像用姓氏首字，避免依赖图片资源 -->
+      <view class="avatar">
+        <text class="avatar-text">{{item.avatarText}}</text>
+      </view>
+
+      <view class="teacher-body">
+        <view class="teacher-head">
+          <text class="teacher-name">{{item.name}}</text>
+          <text class="tag">{{item.specialtyText}}</text>
+        </view>
+
+        <view wx:if="{{item.introduction}}" class="teacher-intro">{{item.introduction}}</view>
+
+        <view
+          wx:if="{{item.phone}}"
+          class="teacher-phone"
+          bindtap="callTeacher"
+          data-phone="{{item.phone}}"
+        >
+          <text class="phone-icon">☎</text>
+          <text>{{item.phone}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

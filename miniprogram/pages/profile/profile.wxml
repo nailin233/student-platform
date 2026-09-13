@@ -1,0 +1,55 @@
+<view class="container">
+  <!-- 个人信息区 -->
+  <view class="card user-card">
+    <view class="user-avatar">
+      <text class="user-avatar-text">{{avatarText}}</text>
+    </view>
+    <view class="user-body">
+      <view class="user-name">{{nickname}}</view>
+      <view wx:if="{{phoneText}}" class="user-phone">{{phoneText}}</view>
+      <view wx:else class="muted">报名后可在此查看您的报名记录</view>
+    </view>
+  </view>
+
+  <!-- 我的报名记录 -->
+  <view class="section-title">我的报名记录</view>
+
+  <view wx:if="{{enrollments.length === 0}}" class="card empty-card">
+    <view class="muted">还没有报名记录</view>
+    <button class="primary go-btn" bindtap="goCourses">去看看课程</button>
+  </view>
+
+  <block wx:else>
+    <view wx:for="{{enrollments}}" wx:key="time" class="card record-item">
+      <view class="record-head">
+        <text class="record-course">{{item.courseName}}</text>
+        <text class="record-time">{{item.time}}</text>
+      </view>
+      <view class="record-line">
+        <text class="record-label">学员</text>
+        <text class="record-value">{{item.name}}</text>
+      </view>
+    </view>
+
+    <button class="ghost clear-btn" bindtap="clearHistory">清空报名记录</button>
+  </block>
+
+  <!-- 联系机构 -->
+  <view class="section-title">联系我们</view>
+  <view class="card contact-card">
+    <view class="contact-row">
+      <text class="contact-label">咨询电话</text>
+      <text class="contact-value link" bindtap="callSchool">400-000-0000</text>
+    </view>
+    <view class="contact-row">
+      <text class="contact-label">报名地址</text>
+      <text class="contact-value">柳州市城中区文化路 88 号 3 楼</text>
+    </view>
+    <view class="contact-row">
+      <text class="contact-label">接待时间</text>
+      <text class="contact-value">周一至周日 09:00-20:00</text>
+    </view>
+  </view>
+
+  <view class="tips">本页面为演示版本，报名记录保存在本机。</view>
+</view>
