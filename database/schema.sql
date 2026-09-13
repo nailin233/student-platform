@@ -1,6 +1,16 @@
 -- Day 2 schema for MySQL 8.0+
+-- ---------------------------------------------------------------------------
+-- 注意：第一行的 SET NAMES 不能删。
+-- MySQL 容器首次初始化时，若客户端字符集不是 utf8mb4，本文件里的中文
+-- （课程名、老师名、性别枚举、默认值'在读'）会被按 latin1 解释，
+-- 导致库里存成双重编码的乱码，例如 '声乐班' 变成 'å£°ä¹ç'。
+-- 这个错误不会报任何错，只在读数据时才发现，非常隐蔽。
+-- ---------------------------------------------------------------------------
+SET NAMES utf8mb4;
+
 CREATE DATABASE IF NOT EXISTS student_platform CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE student_platform;
+SET NAMES utf8mb4;
 CREATE TABLE IF NOT EXISTS courses (id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,name VARCHAR(100) NOT NULL UNIQUE,description TEXT, duration VARCHAR(50),price DECIMAL(10,2) NOT NULL DEFAULT 0,class_time VARCHAR(100),status TINYINT NOT NULL DEFAULT 1,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS teachers (id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,name VARCHAR(50) NOT NULL,phone VARCHAR(30),specialty VARCHAR(100),introduction TEXT,status TINYINT NOT NULL DEFAULT 1,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS students (id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,name VARCHAR(50) NOT NULL,gender ENUM('男','女','其他') NULL,age TINYINT UNSIGNED,phone VARCHAR(30) NOT NULL,emergency_contact VARCHAR(50),emergency_phone VARCHAR(30),course_id BIGINT UNSIGNED,teacher_id BIGINT UNSIGNED,class_time VARCHAR(100),tuition_fee DECIMAL(10,2) NOT NULL DEFAULT 0,paid_amount DECIMAL(10,2) NOT NULL DEFAULT 0,payment_time DATETIME,payment_method VARCHAR(30),duration VARCHAR(50),status VARCHAR(20) NOT NULL DEFAULT '在读',remark VARCHAR(500),created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,INDEX idx_student_phone(phone),INDEX idx_student_name(name),FOREIGN KEY(course_id) REFERENCES courses(id) ON DELETE SET NULL,FOREIGN KEY(teacher_id) REFERENCES teachers(id) ON DELETE SET NULL) ENGINE=InnoDB;
