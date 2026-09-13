@@ -1,0 +1,43 @@
+# 强制 Shell 脚本使用 LF 换行
+# 为什么必须：Windows 下 checkout 时若被转成 CRLF，Linux 上执行会报
+#   bash: ./deploy.sh: /bin/bash^M: bad interpreter: No such file or directory
+# deploy.sh 是上线要用的脚本，绝不能带 \r。
+*.sh text eol=lf
+
+# SQL 文件同理（避免 CRLF 混入 DDL）
+*.sql text eol=lf
+
+# Dockerfile 和 compose 也保持 LF（容器内解析更稳）
+Dockerfile text eol=lf
+*.dockerfile text eol=lf
+docker-compose*.yml text eol=lf
+
+# 前端源码/配置保持 LF（Vite 构建在 Linux 上更稳）
+*.js text eol=lf
+*.ts text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.json text eol=lf
+*.vue text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+
+# Python 源码保持 LF
+*.py text eol=lf
+
+# Markdown / 文档：允许平台默认，但明确为文本
+*.md text
+*.txt text
+
+# 二进制文件，不做任何转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text eol=lf
+*.woff binary
+*.woff2 binary
+*.docx binary
+*.xlsx binary
+*.pdf binary
