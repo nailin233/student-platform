@@ -82,6 +82,16 @@ async function save() {
   }
 }
 
+async function remove(row) {
+  try {
+    await req('/api/courses/' + row.id, { method: 'DELETE' })
+    message.success(`已删除课程「${row.name}」`)
+    await load()
+  } catch (e) {
+    message.error(e.message)
+  }
+}
+
 const columns = [
   { title: '课程名称', key: 'name', ellipsis: { tooltip: true } },
   { title: '学制', key: 'duration', width: 110, render: r => r.duration ?? '—' },
@@ -105,9 +115,19 @@ const columns = [
   {
     title: '操作',
     key: 'actions',
-    width: 100,
+    width: 160,
     fixed: 'right',
-    render: r => h(NButton, { text: true, type: 'primary', onClick: () => open(r) }, { default: () => '编辑' })
+    render: r => h(NSpace, { size: 12, align: 'center' }, () => [
+      h(NButton, { text: true, type: 'primary', onClick: () => open(r) }, { default: () => '编辑' }),
+      h(NPopconfirm, {
+        onPositiveClick: () => remove(r),
+        positiveText: '确认删除',
+        negativeText: '再想想'
+      }, {
+        trigger: () => h(NButton, { text: true, type: 'error' }, { default: () => '删除' }),
+        default: () => `确认删除课程「${r.name}」？该操作不可撤销，已报名该课程的学员将解除课程关联。`
+      })
+    ])
   }
 ]
 

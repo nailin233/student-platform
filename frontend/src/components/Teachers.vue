@@ -3,7 +3,7 @@ import { ref, h, onMounted } from 'vue'
 import {
   useMessage,
   NButton, NSpace, NCard, NInput, NAlert,
-  NDataTable, NModal, NForm, NFormItem, NTag
+  NDataTable, NModal, NForm, NFormItem, NTag, NPopconfirm
 } from 'naive-ui'
 import { request } from '../api.js'
 
@@ -79,6 +79,16 @@ async function save() {
   }
 }
 
+async function remove(row) {
+  try {
+    await req('/api/teachers/' + row.id, { method: 'DELETE' })
+    message.success(`已删除老师「${row.name}」`)
+    await load()
+  } catch (e) {
+    message.error(e.message)
+  }
+}
+
 const columns = [
   { title: '老师姓名', key: 'name', ellipsis: { tooltip: true } },
   { title: '联系电话', key: 'phone', width: 160, render: r => r.phone ?? '—' },
@@ -96,9 +106,19 @@ const columns = [
   {
     title: '操作',
     key: 'actions',
-    width: 100,
+    width: 160,
     fixed: 'right',
-    render: r => h(NButton, { text: true, type: 'primary', onClick: () => open(r) }, { default: () => '编辑' })
+    render: r => h(NSpace, { size: 12, align: 'center' }, () => [
+      h(NButton, { text: true, type: 'primary', onClick: () => open(r) }, { default: () => '编辑' }),
+      h(NPopconfirm, {
+        onPositiveClick: () => remove(r),
+        positiveText: '确认删除',
+        negativeText: '再想想'
+      }, {
+        trigger: () => h(NButton, { text: true, type: 'error' }, { default: () => '删除' }),
+        default: () => `确认删除老师「${r.name}」？该操作不可撤销，其名下学员将解除老师关联。`
+      })
+    ])
   }
 ]
 
