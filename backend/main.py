@@ -120,6 +120,15 @@ def put_course(course_id: int, payload: CourseInput):
         if r.rowcount==0: raise HTTPException(status_code=404,detail='课程不存在')
     return {'message':'课程已更新'}
 
+@app.delete('/api/courses/{course_id}')
+def delete_course(course_id: int):
+    from sqlalchemy import text
+    from database import engine
+    with engine.begin() as conn:
+        r = conn.execute(text('DELETE FROM courses WHERE id=:id'), {'id': course_id})
+        if r.rowcount == 0: raise HTTPException(status_code=404, detail='课程不存在')
+    return {'message': '课程已删除'}
+
 @app.get('/api/teachers')
 def get_teachers():
     from sqlalchemy import text
@@ -143,6 +152,15 @@ def put_teacher(teacher_id: int, payload: TeacherInput):
         r=conn.execute(text('UPDATE teachers SET name=:name,phone=:phone,specialty=:specialty,introduction=:introduction WHERE id=:id'),{**payload.model_dump(),'id':teacher_id})
         if r.rowcount==0: raise HTTPException(status_code=404,detail='老师不存在')
     return {'message':'老师已更新'}
+
+@app.delete('/api/teachers/{teacher_id}')
+def delete_teacher(teacher_id: int):
+    from sqlalchemy import text
+    from database import engine
+    with engine.begin() as conn:
+        r = conn.execute(text('DELETE FROM teachers WHERE id=:id'), {'id': teacher_id})
+        if r.rowcount == 0: raise HTTPException(status_code=404, detail='老师不存在')
+    return {'message': '老师已删除'}
 
 
 
