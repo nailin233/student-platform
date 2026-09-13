@@ -249,7 +249,20 @@ node miniprogram/gen-icons.js
 
 ## Docker 部署
 
-**如果你用的是 2核2G 的云服务器 + 宝塔面板**，直接看
+**一键部署（推荐）**：
+
+```bash
+cd /www/wwwroot/student-platform
+chmod +x deploy.sh
+./deploy.sh
+```
+
+脚本会自动检查环境、生成数据库密码、启动容器、构建前端，并打印后续宝塔操作步骤。
+
+**针对具体服务器的上线清单**：**[docs/DEPLOY-STEPS-49.233.204.148.md](docs/DEPLOY-STEPS-49.233.204.148.md)**
+（IP 已填好，六步走完即可上线）。
+
+**如果你用的是 2核2G 的云服务器 + 宝塔面板**，原理和排错见
 **[docs/DEPLOY-BAOTA.md](docs/DEPLOY-BAOTA.md)** —— 那份是按低配环境写的，
 包含内存调优、易踩的坑、以及实测数据。
 
@@ -287,6 +300,7 @@ cd frontend && NODE_OPTIONS="--max-old-space-size=768" npm run build
 
 | 文档 | 用途 |
 |---|---|
+| [docs/DEPLOY-STEPS-49.233.204.148.md](docs/DEPLOY-STEPS-49.233.204.148.md) | **上线操作清单**（针对 49.233.204.148，IP 已填好，照着做即可） |
 | [docs/DEMO-SCRIPT.md](docs/DEMO-SCRIPT.md) | 客户演示流程手册（含话术、客户提问预案、应急处理） |
 | [docs/DEPLOY-BAOTA.md](docs/DEPLOY-BAOTA.md) | **宝塔面板 + 2核2G 部署指南**（低配优化、易踩坑、已实测） |
 | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | 通用 Linux / Docker 部署说明（含 Nginx 配置、安全加固） |

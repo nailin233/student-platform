@@ -106,13 +106,37 @@ Docker 完整部署和 Linux 部署说明。
 - 演示数据种子脚本
 - 客户演示流程文档、部署文档
 
-当前阶段：**Day 14 交付收尾**。功能层面主闭环已完整，剩余为文档与演示准备。
+当前阶段：**Day 14 交付收尾 + 云服务器部署上线**。功能层面主闭环已完整，
+正在做上线部署验证（目标服务器 49.233.204.148，2核2G + 宝塔）。
 
 当前优先事项：
 
-1. 交付前按 docs/DEMO-SCRIPT.md 走一遍完整演示流程。
-2. 保持演示数据基线稳定（学员 6 / 课程 3 / 老师 3 / 待收 ¥2120）。
-3. 如进入正式使用，按 docs/DEPLOYMENT.md「七、安全加固」逐项处理。
+1. 按 docs/DEPLOY-STEPS-49.233.204.148.md 完成服务器上线。
+2. 交付前按 docs/DEMO-SCRIPT.md 走一遍完整演示流程。
+3. 保持演示数据基线稳定（学员 6 / 课程 3 / 老师 3 / 待收 ¥2120）。
+4. 如进入正式使用，按 docs/DEPLOYMENT.md「七、安全加固」逐项处理。
+
+## 部署前必查（已经踩过的坑）
+
+这两个问题都只在**全新环境**才暴露，本机有历史残留所以看不出来。
+每次准备部署到新机器前，先确认：
+
+**坑 1 · package.json 缺依赖声明（已修复）**
+
+`frontend/package.json` 曾经漏了 `naive-ui`，但 `src/App.vue` 一直在 import 它。
+本机因为 node_modules 有历史残留能跑，**全新环境 npm install 不会装 naive-ui，
+vite build 直接失败**。已补上声明并重装生成 package-lock.json。
+
+验证方法（新增依赖后必须做）：
+
+```bash
+cd frontend && rm -rf node_modules && npm install && npm run build
+# 必须能产出 dist/index.html，否则就是有依赖没声明
+```
+
+**坑 2 · schema.sql 中文双重编码（已修复）**
+
+见 docs/DEPLOY-BAOTA.md 坑 3。`schema.sql` 开头必须有 `SET NAMES utf8mb4;`。
 
 ## 当前阶段不做
 

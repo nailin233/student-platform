@@ -363,6 +363,11 @@ scp -r dist root@你的服务器IP:/www/wwwroot/student-platform/frontend/
 
 ### 6.2 配置反向代理（关键一步）
 
+> **先说明一件事**：前端代码**不用改任何一行**。已经确认过，所有接口请求
+> 用的都是相对路径 `/api/...`（比如 `/api/students`、`/api/dashboard/stats`），
+> 没有硬编码 `localhost:8000`。所以只要 Nginx 把 `/api/` 转发到后端，
+> 前端就自动工作在服务器上。
+
 1. 点该站点 → **设置** → **反向代理** → **添加反向代理**
 2. 填写：
 
@@ -448,7 +453,9 @@ docker stats --no-stream
 free -h
 ```
 
-MySQL 稳定在 400-500MB、后端 100-150MB 是正常的。
+用 lowmem 编排时，MySQL 稳定在 **130-200MB**、后端 **50-80MB** 是正常的。
+如果你看到 MySQL 又涨回 400MB+，说明跑的可能是默认的 `docker-compose.yml`
+而不是 `docker-compose.lowmem.yml`。
 
 ---
 

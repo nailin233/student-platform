@@ -11,7 +11,14 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv(Path(__file__).with_name('.env'))
 app=FastAPI(title=os.getenv('APP_NAME','Student Platform Demo API'),version='0.1.0')
-app.add_middleware(CORSMiddleware,allow_origins=['http://localhost:5173'],allow_credentials=True,allow_methods=['*'],allow_headers=['*'])
+
+# 允许的来源。生产部署走 Nginx 同源反向代理时其实不涉及跨域，
+# 这里保留是为了本地开发（Vite 在 5173）和直接访问后端调试的场景。
+# 可用环境变量 CORS_ORIGINS 覆盖，多个用逗号分隔，例如：
+#   CORS_ORIGINS=http://123.45.67.89,http://localhost:5173
+_cors = os.getenv('CORS_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173')
+_origins = [o.strip() for o in _cors.split(',') if o.strip()]
+app.add_middleware(CORSMiddleware,allow_origins=_origins,allow_credentials=True,allow_methods=['*'],allow_headers=['*'])
 @app.get('/api/health')
 def health(): return {'status':'ok','message':'student platform backend is running'}
 @app.get('/api/database/health')
