@@ -249,16 +249,30 @@ node miniprogram/gen-icons.js
 
 ## Docker 部署
 
-完整的 Linux 服务器部署说明见 **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**。
+**如果你用的是 2核2G 的云服务器 + 宝塔面板**，直接看
+**[docs/DEPLOY-BAOTA.md](docs/DEPLOY-BAOTA.md)** —— 那份是按低配环境写的，
+包含内存调优、易踩的坑、以及实测数据。
 
-快速版：
+**通用 Linux 服务器**部署见 **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**。
+
+### 两个编排文件的区别
+
+| 文件 | 用途 | MySQL 内存 | 端口策略 |
+|---|---|---|---|
+| `docker-compose.yml` | 本地开发 / 高配服务器 | 默认（实测 485MB） | MySQL 暴露 3307、后端暴露 8000 |
+| `docker-compose.lowmem.yml` | **低配服务器（2核2G）** | 调参后 135MB | 都只绑 127.0.0.1，由 Nginx 反代 |
+
+低配版完整启动方式：
 
 ```bash
-# 启动 MySQL + 后端
-docker-compose up -d --build
+# 1. 创建 .env 设置数据库密码
+echo "MYSQL_ROOT_PASSWORD=$(openssl rand -base64 16)" > .env
 
-# 构建前端静态文件
-cd frontend && npm install && npm run build
+# 2. 启动
+docker-compose -f docker-compose.lowmem.yml up -d --build
+
+# 3. 构建前端
+cd frontend && NODE_OPTIONS="--max-old-space-size=768" npm run build
 ```
 
 然后用 Nginx 托管 `frontend/dist`，并把 `/api/` 反向代理到 `127.0.0.1:8000`。
@@ -274,7 +288,9 @@ cd frontend && npm install && npm run build
 | 文档 | 用途 |
 |---|---|
 | [docs/DEMO-SCRIPT.md](docs/DEMO-SCRIPT.md) | 客户演示流程手册（含话术、客户提问预案、应急处理） |
-| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Linux / Docker 部署说明（含 Nginx 配置、备份、安全加固） |
+| [docs/DEPLOY-BAOTA.md](docs/DEPLOY-BAOTA.md) | **宝塔面板 + 2核2G 部署指南**（低配优化、易踩坑、已实测） |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | 通用 Linux / Docker 部署说明（含 Nginx 配置、安全加固） |
+| [docs/CHECK-SERVER.md](docs/CHECK-SERVER.md) | 部署前的服务器环境检查清单 |
 | [AGENTS.md](AGENTS.md) | 项目开发约束（改动代码前必读） |
 | [frontend/DESIGN-TOKENS.md](frontend/DESIGN-TOKENS.md) | 前端设计规范 |
 | [backend/tests/regression_api.mjs](backend/tests/regression_api.mjs) | 接口回归脚本 |

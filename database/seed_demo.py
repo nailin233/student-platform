@@ -12,13 +12,23 @@ Day 14 · 客户演示数据种子脚本
   3. 覆盖多种状态 —— 在读 / 已缴费 / 欠费 各有代表，方便演示筛选与统计。
   4. 只动演示数据，不动课程和老师的结构 —— 课程/老师由 schema.sql 提供。
 
-运行前提：后端未启动也可以直接调用本脚本（走数据库直连），
-         数据库连接参数取自 backend/.env 的 DATABASE_URL。
+运行前提：后端未启动也可以直接调用本脚本（走数据库直连）。
+         数据库连接参数依次取：环境变量 DATABASE_URL → backend/.env → 默认值。
 
-用法：
+用法（本机开发）：
     cd backend && python ../database/seed_demo.py
     # 或从项目根目录：
     python database/seed_demo.py
+
+用法（服务器 Docker 部署，推荐）：
+    # 直接把脚本放进后端容器里跑，天然能连上内网数据库，不用在宿主机装依赖。
+    # 容器里 /app 就是 backend 目录，脚本已能自动识别。
+    docker cp database/seed_demo.py sp-backend:/app/seed_demo.py
+    docker exec sp-backend python /app/seed_demo.py
+    docker exec sp-backend rm -f /app/seed_demo.py    # 跑完删掉
+
+    # 如果脚本放在别的路径，用 APP_DIR 指定后端目录：
+    #   docker exec -e APP_DIR=/app sp-backend python /tmp/seed_demo.py
 ============================================================================
 """
 
@@ -27,12 +37,26 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
-# 让脚本能 import 到 backend 下的 database 模块
-ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / 'backend'))
+# 定位 backend 模块所在目录，兼容三种运行位置：
+#   1. 本机：脚本在 <root>/database/，backend 在同级 <root>/backend
+#   2. 容器内（COPY . . 后的 /app）：database.py 就在脚本同级
+#   3. 容器内（脚本被拷到 /tmp 等别处）：用 APP_DIR 环境变量指定
+_HERE = Path(__file__).resolve().parent
+_CANDIDATES = [
+    Path(os.getenv('APP_DIR', '/app')),   # 容器内后端目录
+    _HERE.parent / 'backend',             # 本机项目结构
+    _HERE,                                # 脚本与 database.py 同目录
+]
+BACKEND_DIR = next((c for c in _CANDIDATES if (c / 'database.py').exists()), None)
+if BACKEND_DIR is None:
+    print('找不到 backend/database.py。')
+    print('本机请从项目目录运行；容器内请加 -e APP_DIR=/app 或把脚本放到 /app 下。')
+    raise SystemExit(1)
+
+sys.path.insert(0, str(BACKEND_DIR))
 
 from dotenv import load_dotenv  # noqa: E402
-load_dotenv(ROOT / 'backend' / '.env')
+load_dotenv(BACKEND_DIR / '.env')
 
 from sqlalchemy import text  # noqa: E402
 from database import engine  # noqa: E402

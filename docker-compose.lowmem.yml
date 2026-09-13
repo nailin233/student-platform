@@ -1,0 +1,71 @@
+# 低配服务器部署编排（2核2G 专用）
+# ============================================================================
+# 与根目录 docker-compose.yml 的区别：
+#
+#   1. MySQL 加了内存参数限制 —— 2G 内存不调这些，MySQL 8.4 默认配置
+#      峰值能吃掉 800MB+，加上后端和宝塔面板会触发 OOM 被系统杀掉
+#   2. MySQL 不再对宿主机暴露端口 —— 只给后端容器内部访问，
+#      既省资源又安全（避免被扫端口爆破）
+#   3. 两个服务都设了 mem_limit —— 总量控制在 1.5G 以内，
+#      给系统和宝塔留出余量
+#
+# 用法：
+#   docker-compose -f docker-compose.lowmem.yml up -d --build
+# ============================================================================
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: sp-mysql
+    restart: unless-stopped
+
+    # ---- 内存限制（2G 服务器的核心配置）----
+    command:
+      - --innodb-buffer-pool-size=128M
+      - --innodb-log-buffer-size=8M
+      - --innodb-flush-method=O_DIRECT
+      - --key-buffer-size=8M
+      - --max-connections=50
+      - --table-open-cache=64
+      - --skip-performance-schema
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+
+    mem_limit: 600m
+    memswap_limit: 700m
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?请在 .env 里设置 MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: student_platform
+
+    # 不对宿主机暴露端口：只允许 compose 内网访问（更安全）
+    # 如需用 Navicat 等工具连，临时打开下面两行，用完注释掉
+    # ports:
+    #   - "127.0.0.1:3307:3306"
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+
+  backend:
+    build: ./backend
+    container_name: sp-backend
+    restart: unless-stopped
+
+    mem_limit: 500m
+    memswap_limit: 600m
+
+    environment:
+      DATABASE_URL: mysql+pymysql://root:${MYSQL_ROOT_PASSWORD:?}@mysql:3306/student_platform?charset=utf8mb4
+      APP_NAME: 学员管理平台 API
+
+    # 只在本地监听，由宝塔的 Nginx 反代进来
+    ports:
+      - "127.0.0.1:8000:8000"
+
+    depends_on:
+      mysql:
+        condition: service_started
+
+volumes:
+  mysql_data:
