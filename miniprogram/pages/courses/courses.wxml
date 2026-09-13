@@ -1,0 +1,9 @@
+<view class="container">
+  <view class="title">选择课程</view><view class="muted">查看课程安排后填写报名资料</view>
+  <view wx:if="{{loading}}" class="card">正在加载课程...</view>
+  <view wx:if="{{error}}" class="card error">{{error}}</view>
+  <view wx:for="{{courses}}" wx:key="id" class="card" bindtap="chooseCourse" data-id="{{item.id}}">
+    <view>{{item.name}}</view><view class="muted">{{item.duration}} · ¥{{item.price}}</view><view class="muted">{{item.class_time}}</view>
+  </view>
+  <view class="card" wx:if="{{teacherNames}}"><view>任课老师</view><view class="muted">{{teacherNames}}</view></view>
+</view>

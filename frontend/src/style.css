@@ -1,0 +1,136 @@
+/* ==========================================================================
+   学员管理平台 · 全局样式入口
+   ---------------------------------------------------------------------------
+   组件色彩统一由 Naive UI 的 themeOverrides（见 App.vue）承担。
+   本文件只负责：设计令牌、页面级骨架、基础排版。
+   注意：不要再用 aside / nav / main / h1 等全局标签选择器——
+   Naive UI 的 n-layout 内部渲染出的标签也叫 aside / main，会被误伤。
+   ========================================================================== */
+
+:root {
+  /* —— 品牌色 —— */
+  --brand-color: #0052d9;
+  --brand-color-hover: #366ef4;
+  --brand-color-active: #003cab;
+  --brand-color-light: #f2f3ff;
+
+  /* —— 功能色 —— */
+  --success-color: #2ba471;
+  --warning-color: #e37318;
+  --error-color: #d54941;
+
+  /* —— 中性色 —— */
+  --bg-page: #f3f3f4;
+  --bg-container: #ffffff;
+  --text-primary: rgba(0, 0, 0, 0.9);
+  --text-secondary: rgba(0, 0, 0, 0.6);
+  --text-placeholder: rgba(0, 0, 0, 0.4);
+  --border-color: #e7e8eb;
+  --sidebar-bg: #242424;
+
+  /* —— 字号（中老年友好：正文 16px 起）—— */
+  --font-display: 28px;
+  --font-title: 20px;
+  --font-body: 16px;
+  --font-caption: 15px;
+
+  /* —— 尺寸 —— */
+  --radius: 6px;
+  --radius-lg: 12px;
+  --shadow-card: 0 8px 24px rgba(15, 23, 42, 0.06);
+  --control-height: 42px;
+}
+
+/* —— 基础 —— */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", sans-serif;
+  font-size: var(--font-body);
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+/* ==========================================================================
+   业务页面通用骨架（.business-page 内的元素才受影响）
+   ========================================================================== */
+
+.business-page {
+  animation: page-in 0.24s ease-out;
+}
+
+.business-page .page-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.business-page .page-head h1 {
+  margin: 0 0 4px;
+  font-size: var(--font-display);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+
+.business-page .page-head p {
+  margin: 0;
+  font-size: var(--font-caption);
+  color: var(--text-secondary);
+}
+
+/* 卡片统一圆角与阴影 */
+.data-card {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   中老年友好：表格行高与按钮点击区域
+   ========================================================================== */
+
+.n-data-table .n-data-table-td {
+  min-height: 52px;
+}
+
+/* ==========================================================================
+   响应式
+   ========================================================================== */
+
+@media (max-width: 700px) {
+  .business-page .page-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .business-page .page-head h1 {
+    font-size: 24px;
+  }
+}

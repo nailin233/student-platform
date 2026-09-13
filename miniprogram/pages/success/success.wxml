@@ -1,0 +1,1 @@
+<view class="container"><view class="card success"><view class="title">报名已提交</view><view class="muted">工作人员会尽快与您联系确认课程安排。</view><button class="primary" bindtap="back">返回课程列表</button></view></view>

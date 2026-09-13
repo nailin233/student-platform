@@ -1,0 +1,4 @@
+<view class="container"><view class="title">填写报名资料</view><view class="card">
+  <input placeholder="姓名（必填）" data-field="name" bindinput="input" /><input placeholder="性别" data-field="gender" bindinput="input" /><input type="number" placeholder="年龄" data-field="age" bindinput="input" /><input type="number" placeholder="联系电话（必填）" data-field="phone" bindinput="input" />
+  <button class="primary" loading="{{submitting}}" bindtap="submit">提交报名</button>
+</view></view>

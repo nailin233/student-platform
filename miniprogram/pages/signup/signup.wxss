@@ -1,0 +1,2 @@
+input { background: #f6f7f3; padding: 24rpx; margin-bottom: 20rpx; border-radius: 8rpx; }
+button { margin-top: 24rpx; }

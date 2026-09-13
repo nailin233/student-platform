@@ -1,0 +1,18 @@
+node_modules/
+dist/
+.venv/
+__pycache__/
+*.pyc
+.env
+*.log
+
+.venv-linux/
+
+# 工作日志与内部记录，不入库
+.workbuddy/
+
+# 需求文档为二进制大文件，不入库
+*.docx
+
+# 损坏的旧仓库备份，不入库
+.git.broken/
