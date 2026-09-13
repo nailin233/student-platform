@@ -94,15 +94,20 @@ const themeOverrides = {
       <n-dialog-provider>
         <Login v-if="!authed" @login="onLogin" />
 
-        <n-layout v-else has-sider style="min-height:100vh">
-          <n-layout-sider bordered width="240" content-style="padding:24px 12px;background:#242424">
-            <div style="color:#fff;font-size:22px;font-weight:700;padding:8px 16px 28px">
+        <n-layout v-else has-sider style="height:100vh">
+          <n-layout-sider
+            bordered
+            width="240"
+            :native-scrollbar="false"
+            content-style="padding:24px 12px;background:#242424;min-height:100%;display:flex;flex-direction:column"
+          >
+            <div style="color:#fff;font-size:22px;font-weight:700;padding:8px 16px 28px;flex:none">
               学员管理平台
             </div>
-            <n-menu :value="view" :options="menu" inverted @update:value="select" />
+            <n-menu :value="view" :options="menu" inverted @update:value="select" style="flex:1" />
           </n-layout-sider>
 
-          <n-layout>
+          <n-layout :native-scrollbar="false" content-style="min-height:100%">
             <n-layout-header bordered style="height:72px;padding:0 32px;display:flex;align-items:center;justify-content:space-between">
               <n-breadcrumb>
                 <n-breadcrumb-item>运营中心</n-breadcrumb-item>
@@ -111,7 +116,8 @@ const themeOverrides = {
               <n-button quaternary size="small" @click="logout">退出登录</n-button>
             </n-layout-header>
 
-            <n-layout-content content-style="padding:32px;max-width:1400px;width:100%;margin:0 auto">
+            <n-layout-content content-style="padding:32px">
+              <div style="max-width:1400px;margin:0 auto">
               <!-- 工作台 -->
               <section v-if="view === 'dashboard'" class="business-page">
                 <header class="page-head">
@@ -167,6 +173,7 @@ const themeOverrides = {
               <Students v-else-if="view === 'students'" />
               <Courses v-else-if="view === 'courses'" />
               <Teachers v-else-if="view === 'teachers'" />
+              </div>
             </n-layout-content>
           </n-layout>
         </n-layout>

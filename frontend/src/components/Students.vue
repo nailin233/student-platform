@@ -45,18 +45,18 @@ const fields = [
   ['备注', 'remark', 'text']
 ]
 
-// 表格展示列（不含备注等长字段，避免横向挤爆）
+// 表格展示列（第三项为列宽）
+// 目标：在 1024px 内容区内容纳全部列，避免中老年用户需要横向滚动
 const tableFields = [
-  ['姓名', 'name'],
-  ['性别', 'gender'],
-  ['年龄', 'age'],
-  ['联系电话', 'phone'],
-  ['所选课程', 'course_name'],
-  ['任课老师', 'teacher_name'],
-  ['上课时间', 'class_time'],
-  ['应缴金额', 'tuition_fee'],
-  ['已缴金额', 'paid_amount'],
-  ['状态', 'status']
+  ['姓名', 'name', 88],
+  ['性别', 'gender', 64],
+  ['年龄', 'age', 60],
+  ['联系电话', 'phone', 124],
+  ['所选课程', 'course_name', 100],
+  ['任课老师', 'teacher_name', 92],
+  ['上课时间', 'class_time', 132],
+  ['应缴金额', 'tuition_fee', 96],
+  ['状态', 'status', 76]
 ]
 
 const genderOptions = [
@@ -99,6 +99,17 @@ function emptyForm() {
   )
 }
 const form = ref(emptyForm())
+
+// 详情展示用：把 ID 转成名称，金额加符号
+function formatDetail(key) {
+  const v = detail.value?.[key]
+  if (v === null || v === undefined || v === '') return '—'
+  if (key === 'course_id') return detail.value?.course_name || `课程 #${v}`
+  if (key === 'teacher_id') return detail.value?.teacher_name || `老师 #${v}`
+  if (key === 'tuition_fee' || key === 'paid_amount') return '¥' + Number(v).toFixed(2)
+  if (key === 'payment_time') return String(v).replace('T', ' ').slice(0, 19)
+  return v
+}
 
 async function req(url, opt = {}) {
   const res = await fetch(url, opt)
@@ -224,20 +235,23 @@ function search() {
 }
 
 const columns = [
-  ...tableFields.map(([title, key]) => ({
+  ...tableFields.map(([title, key, width]) => ({
     title,
     key,
+    width,
     ellipsis: { tooltip: true },
     render: key === 'status'
       ? r => h(NTag, { type: r.status === '在读' ? 'success' : 'default', size: 'small', bordered: false }, { default: () => r[key] || '—' })
-      : r => r[key] ?? '—'
+      : key === 'tuition_fee' || key === 'paid_amount'
+        ? r => (r[key] == null ? '—' : '¥' + Number(r[key]).toFixed(2))
+        : r => r[key] ?? '—'
   })),
   {
     title: '操作',
     key: 'op',
-    width: 200,
+    width: 168,
     fixed: 'right',
-    render: row => h(NSpace, { size: 4 }, () => [
+    render: row => h(NSpace, { size: 12, align: 'center' }, () => [
       h(NButton, { text: true, type: 'primary', onClick: () => open(row, true) }, { default: () => '详情' }),
       h(NButton, { text: true, type: 'primary', onClick: () => open(row) }, { default: () => '编辑' }),
       h(NPopconfirm, {
@@ -290,7 +304,6 @@ onMounted(load)
         :data="rows"
         :loading="busy"
         :bordered="false"
-        :scroll-x="1200"
         :row-key="r => r.id"
       />
       <div style="display:flex;justify-content:flex-end;margin-top:20px">
@@ -351,7 +364,7 @@ onMounted(load)
     >
       <n-descriptions bordered :column="2" label-placement="left">
         <n-descriptions-item v-for="[label, key] in fields" :key="key" :label="label">
-          {{ detail?.[key] ?? '—' }}
+          {{ formatDetail(key) }}
         </n-descriptions-item>
       </n-descriptions>
     </n-modal>
