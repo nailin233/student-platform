@@ -21,3 +21,9 @@ __pycache__/
 miniprogram/.preview/
 miniprogram/_*.js
 miniprogram/images/_iconsheet.png
+
+# 部署打包产物，不入库（可随时重新生成）
+*.tar.gz
+
+# 本地临时脚本/工具，不入库
+_*
