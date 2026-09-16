@@ -46,16 +46,25 @@ const fields = [
   ['备注', 'remark', 'text']
 ]
 
-// 表格展示列（第三项为列宽）
-// 目标：在 1024px 内容区内容纳全部列，避免中老年用户需要横向滚动
+// 表格展示列（第三项为列宽，均为浏览器实测值 + 余量）
+//
+// 实测（16px 字号，单元格左右内边距各 12px，内容所需宽度含内边距）：
+//   姓名 72 / 性别 56 / 年龄 56 / 联系电话 127 / 所选课程 88 / 任课老师 88
+//   上课时间 150 / 应缴金额 94 / 状态 72 / 操作 144
+// 这里给的都是「表头或数据较长者 + 余量」，不要凭感觉改小。
+//
+// ⚠️ 表格必须设 :scroll-x（见下方 n-data-table），值与列宽合计一致（996）。
+// 操作列是 fixed:'right'，它会盖在中间列之上；容器宽度不足时被盖住的列
+// 既看不到也滚不出来。实测视口 <1348px 就会发生（1366 笔记本不全屏即中招）。
+// 设了 scroll-x 后窄屏会出现横向滚动条，数据永远可达；宽屏下外观不变。
 const tableFields = [
   ['姓名', 'name', 88],
-  ['性别', 'gender', 64],
-  ['年龄', 'age', 60],
-  ['联系电话', 'phone', 124],
-  ['所选课程', 'course_name', 100],
-  ['任课老师', 'teacher_name', 92],
-  ['上课时间', 'class_time', 132],
+  ['性别', 'gender', 56],
+  ['年龄', 'age', 56],
+  ['联系电话', 'phone', 136],
+  ['所选课程', 'course_name', 88],
+  ['任课老师', 'teacher_name', 88],
+  ['上课时间', 'class_time', 160],
   ['应缴金额', 'tuition_fee', 96],
   ['状态', 'status', 76]
 ]
@@ -260,7 +269,7 @@ const columns = [
   {
     title: '操作',
     key: 'op',
-    width: 168,
+    width: 152,
     fixed: 'right',
     render: row => h(NSpace, { size: 12, align: 'center' }, () => [
       h(NButton, { text: true, type: 'primary', onClick: () => open(row, true) }, { default: () => '详情' }),
@@ -316,6 +325,7 @@ onMounted(load)
         :loading="busy"
         :bordered="false"
         :row-key="r => r.id"
+        :scroll-x="996"
       />
       <div style="display:flex;justify-content:flex-end;margin-top:20px">
         <n-pagination
@@ -348,6 +358,7 @@ onMounted(load)
               v-else-if="type === 'number'"
               v-model:value="form[key]"
               :min="0"
+              :placeholder="'请输入' + label"
               style="width:100%"
             />
             <n-input

@@ -170,6 +170,7 @@ onMounted(load)
             v-if="type === 'number'"
             v-model:value="form[key]"
             :min="0"
+            :placeholder="'请输入' + label"
             style="width:100%"
           />
           <n-input

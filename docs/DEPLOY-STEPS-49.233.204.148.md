@@ -91,10 +91,12 @@ sudo nginx -t && sudo systemctl reload nginx
 
 ## 五、部署结果验证（实测）
 
+### 5.1 接口层（curl）
+
 | 检查项 | 结果 |
 |---|---|
 | 公网首页 | HTTP 200，`<title>学员管理平台 · 工作台</title>` ✅ |
-| 静态资源 | `/assets/index-rXQvF2kg.js` 686582 字节，HTTP 200 ✅ |
+| 静态资源 | `/assets/index-DxDm05li.js` 686676 字节，HTTP 200 ✅ |
 | `/api/health` | `{"status":"ok","message":"student platform backend is running"}` ✅ |
 | `/api/dashboard/stats` | `{"students":6,"courses":3,"teachers":3,"unpaid_amount":2120.0}` ✅ |
 | 中文编码 | 课程名 `声乐班 / 摄影班 / 书法班`、学员姓名全部正常 ✅ |
@@ -103,6 +105,76 @@ sudo nginx -t && sudo systemctl reload nginx
 
 **中文编码这个坑在真实全新环境验证通过了** —— `schema.sql` 开头的
 `SET NAMES utf8mb4;` 确实解决了双重编码问题（读和写都正常）。
+
+### 5.2 浏览器层（真实 Chromium 渲染 + 交互）
+
+跑了一遍完整演示流程，逐页目视确认：
+
+| 步骤 | 结果 |
+|---|---|
+| 登录页 | 渲染正常，左蓝右白双栏、品牌区、登录卡片齐全 ✅ |
+| 登录（任意账号密码可进） | 跳转 `#dashboard` ✅ |
+| 管理员工作台 | 6 / 3 / 3 / ¥2120.00 四个数字正确 ✅ |
+| 学员管理表格 | 6 行数据、状态标签、`详情 编辑 删除` 按钮全部渲染 ✅ |
+| 学员详情弹窗 | 16 个 PRD 字段全部显示（含紧急联系人、缴费方式、备注）✅ |
+| 课程管理 / 老师管理 | 表格与操作列正常 ✅ |
+| 搜索 | 按姓名「刘」→ 1 条；按电话「1877」→ 1 条；清空 → 恢复 6 条 ✅ |
+| 编辑弹窗回填 | 11 个输入框 + 5 个下拉框全部正确回填，未泄漏 `id`/`created_at` ✅ |
+| Excel 导出（两个） | HTTP 200，xlsx 内容正确，**缴费时间已格式化为日期** ✅ |
+| 视口 1366 / 1440 | 表格 10 列全部可见，无截断、无横向滚动 ✅ |
+| 视口 1152 | 出现横向滚动条（兜底），列仍可全部看到 ✅ |
+
+浏览器验证过程中发现并修复了 3 个问题，见下一节。
+
+---
+
+## 五之二、本轮浏览器验证发现并修复的问题
+
+这三个都是**只有真的用浏览器打开才会暴露**的问题，接口层完全测不出来。
+
+### 问题 1 · 导出 Excel 的「缴费时间」显示成一串数字（严重）
+
+**现象**：导出的 xlsx 里，`缴费时间` 列存的是 Excel 序列号 `46272.41666666666`，
+不是 `2026-09-07 10:00:00`。
+
+**根因**：`backend/export_service.py` 直接把 `datetime` 塞进单元格，
+**从未设置单元格的 `number_format`**。openpyxl 把它存成数字，单元格格式是
+默认的 General，Excel 就按数字显示。
+
+> 排查关键：`numFmt 164 = yyyy-mm-dd h:mm:ss` 是 openpyxl 默认模板自带的，
+> 看到它别以为格式已经生效。要看**单元格引用的样式 `s=` 指向哪个 xf** ——
+> 当时是 `s="1"`（General），不是 `s="2"`（日期）。
+
+**修复**：新增 `_format_datetime_column(ws, col)`，给指定列的 datetime
+单元格显式设 `number_format = 'yyyy-mm-dd hh:mm:ss'`。
+顺手加了 `_polish()`：表头加粗、冻结首行、按内容自适应列宽（中文按 2 字符宽计）。
+
+**影响范围**：`导出学员`（第 10 列）与 `导出缴费`（第 5 列）**两个都要改**。
+
+### 问题 2 · 学员表格「上课时间」被截断（中）
+
+**现象**：显示成 `周三 19:00-21...`。对中老年用户就是看不全时间。
+
+**根因**：列宽给 132px，实测 `周三 19:00-21:00` 文字宽 126px，
+扣除单元格左右各 12px 内边距后内容区只剩 120px → 差 6px。
+
+**修复**：列宽改 160px（留 10px 余量，防不同机器字体渲染差异），
+空间从「性别/所选课程」匀出（这两列只需容纳表头宽度）。
+
+### 问题 3 · 窄屏下「应缴金额」「状态」被操作列永久遮住（严重）
+
+**现象**：视口窄于约 1348px 时，表格里看不到 `应缴金额` 和 `状态` 两列，
+而且**没有滚动条可以划出来** —— 数据等于永久不可见。
+
+**根因**：`操作` 列是 `fixed: 'right'`（吸右），它渲染在中间列**之上**。
+表格需要 996px，容器只有 800px 时，被吸右列盖住的部分既看不到也滚不出来。
+
+> 这个坑的排查要点：不能只量 `table` 元素的 `scrollWidth > clientWidth`
+> —— 表格自己不是滚动容器，要沿 `parentElement` 往上找真正的滚动父级。
+
+**修复**：给 `n-data-table` 加 `:scroll-x="996"`（值 = 列宽合计）。
+宽屏下外观完全不变，窄屏出现横向滚动条，数据永远可达。
+**课程/老师两个表格同配置，但列少、窄屏能自然收缩，实测不需要改。**
 
 ---
 
@@ -180,6 +252,41 @@ sudo docker compose -f docker-compose.lowmem.yml up -d --build backend   # 后�
 > ⚠️ **打包时 `.venv` 的排除规则必须写 `*/.venv`**。
 > 只写 `./.venv` 排不掉 `backend/.venv`（本地虚拟环境，166MB），
 > 包会变成 31MB 而不是 400KB。
+
+### 只改了少量文件时：走增量更新（快得多）
+
+全量打包再解压没必要。只传动过的那几个文件即可：
+
+```bash
+# ── 只改前端 ──
+cd frontend && npm run build && cd ..
+tar czf _fe.tar.gz frontend/dist
+scp -i ~/.ssh/sp_deploy _fe.tar.gz ubuntu@49.233.204.148:/tmp/
+ssh -i ~/.ssh/sp_deploy ubuntu@49.233.204.148 \
+  'sudo bash -c "rm -rf /www/wwwroot/student-platform/frontend/dist/assets && \
+   mkdir -p /www/wwwroot/student-platform/frontend/dist/assets && \
+   tar xzf /tmp/_fe.tar.gz -C /www/wwwroot/student-platform"'
+# nginx 无需重载，静态文件直接生效
+```
+
+```bash
+# ── 只改后端某个 .py ──
+tar czf _upd.tar.gz backend/export_service.py
+scp -i ~/.ssh/sp_deploy _upd.tar.gz ubuntu@49.233.204.148:/tmp/
+ssh -i ~/.ssh/sp_deploy ubuntu@49.233.204.148 \
+  'sudo tar xzf /tmp/_upd.tar.gz -C /www/wwwroot/student-platform && \
+   cd /www/wwwroot/student-platform && \
+   sudo docker compose -f docker-compose.lowmem.yml up -d --build backend'
+```
+
+> **后端重建很快（实测 10 秒）**：`Dockerfile` 是
+> `COPY requirements.txt` → `pip install` → `COPY . .` 的分层写法，
+> 只要 `requirements.txt` 没变，`pip install` 那一层就命中缓存，
+> 只有最后的 `COPY . .` 重跑。**所以不要因为"重建慢"而用 `docker cp`
+> 偷偷替换容器里的文件** —— 那样镜像和容器会不一致，容器一重建修复就丢了。
+
+> ⚠️ **上传后要在解压前后用 md5 校验**。中途断流会产生一个看起来正常
+> 但内容残缺的包。
 
 ---
 

@@ -138,6 +138,28 @@ cd frontend && rm -rf node_modules && npm install && npm run build
 
 见 docs/DEPLOY-BAOTA.md 坑 3。`schema.sql` 开头必须有 `SET NAMES utf8mb4;`。
 
+**坑 3 · 表格 `fixed:'right'` 会永久遮住中间列（已修复）**
+
+`操作` 列是 `fixed: 'right'`，它渲染在中间列**之上**。表格固定列宽合计超过
+容器宽度时，被盖住的列**既看不到也滚不出来**（外层祖先链是 `overflow: visible`，
+最外层 `overflow-x: hidden`，没有任何滚动条）。学员表实测视口 <1348px 即触发。
+
+**规则**：给 `n-data-table` 设 `:scroll-x="<列宽合计>"`。宽屏外观不变，
+窄屏出现横向滚动条，数据永远可达。
+
+**排查要点**：不要只量 `table` 自己 —— 表格不是滚动容器，
+要沿 `parentElement` 往上找真正带 `overflow-x` 的父级。
+
+**坑 4 · 导出 Excel 的 datetime 必须显式设 number_format（已修复）**
+
+openpyxl 把 `datetime` 存成 Excel 序列号；单元格格式默认是 General 时，
+Excel 打开显示成 `46272.41666666666` 而不是日期。
+`backend/export_service.py` 已加 `_format_datetime_column()`。
+**新增任何导出列时，若是 datetime 就必须登记到该函数。**
+
+陷阱：`numFmt 164 = yyyy-mm-dd h:mm:ss` 是 openpyxl 默认模板自带的，
+看到它别以为格式生效了 —— 要看单元格的 `s=` 指向的 xf 里 numFmtId 是否真是 164。
+
 ## 当前阶段不做
 
 除非用户明确确认，不要现在执行：
